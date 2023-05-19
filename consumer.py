@@ -22,7 +22,7 @@ def parserInLongMsg(inlongBytes):
 client = pulsar.Client('pulsar://localhost:6650')
 
 
-def consumerCreator(sub, consumerName):
+def consumerCreator(sub, consumerName, fileType):
     global client
 
     consumer = client.subscribe(sub, consumerName)
@@ -31,7 +31,7 @@ def consumerCreator(sub, consumerName):
     if not os.path.exists(file):
         os.makedirs(file)
 
-    fileName = '{}/{}_{}.csv'.format(file, file, datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
+    fileName = '{}/{}_{}.{}'.format(file, file, datetime.datetime.now().strftime('%Y%m%d%H%M%S'), fileType.lower())
 
     while True:
         msg = consumer.receive()
@@ -54,6 +54,6 @@ def consumerCreator(sub, consumerName):
 
 
 if __name__ == '__main__':
-    # consumerCreator('persistent://public/personal_loan_default_forecast/test_public', 'con_test_public')
-    # consumerCreator('persistent://public/personal_loan_default_forecast/train_public', 'con_train_public')
-    consumerCreator('persistent://public/personal_loan_default_forecast/train_internet', 'con_train_internet')
+    # consumerCreator('persistent://public/personal_loan_default_forecast/test_public', 'con_test_public', 'csv')
+    # consumerCreator('persistent://public/personal_loan_default_forecast/train_public', 'con_train_public', 'csv')
+    consumerCreator('persistent://public/personal_loan_default_forecast/train_internet', 'con_train_internet', 'csv')
