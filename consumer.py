@@ -1,4 +1,5 @@
 
+import datetime
 import pulsar
 import os
 
@@ -27,12 +28,17 @@ def consumerCreator(sub, consumerName):
     consumer = client.subscribe(sub, consumerName)
     file = sub[sub.rindex('/') + 1:]
 
+    if not os.path.exists(file):
+        os.makedirs(file)
+
+    fileName = '{}/{}_{}.csv'.format(file, file, datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
+
     while True:
         msg = consumer.receive()
         try:
             data = msg.data()
             dataToLine = parserInLongMsg(data)
-            with open('{}.csv'.format(file), 'a') as f:
+            with open(fileName, 'a') as f:
                 for line in dataToLine:
                     f.write(line)
                     f.write('\n')
